@@ -6,6 +6,7 @@ use Grav\Common\Page\Collection;
 use Grav\Common\Page\Page;
 use RocketTheme\Toolbox\Event\Event;
 use TeamTNT\TNTSearch\Exceptions\IndexNotFoundException;
+use TeamTNT\TNTSearch\Exceptions\LangNotFoundException;
 use TeamTNT\TNTSearch\TNTSearch;
 
 class GravTNTSearch
@@ -16,8 +17,8 @@ class GravTNTSearch
 
     public function __construct($options = [])
     {
-        $search_type = Grav::instance()['config']->get('plugins.tntsearch.search_type');
-        $stemmer = Grav::instance()['config']->get('plugins.tntsearch.stemmer');
+        $search_type = Grav::instance()['config']->get('plugins.multilang-tntsearch.search_type');
+        $stemmer = Grav::instance()['config']->get('plugins.multilang-tntsearch.stemmer');
         $data_path = Grav::instance()['locator']->findResource('user://data', true) . '/tntsearch';
         
         if (!file_exists($data_path)) {
@@ -137,31 +138,38 @@ class GravTNTSearch
     }
 
 //    public function createIndex() 
-    public function createIndex( $lang=null )//bba
+    public function createIndex( $lang )//bba
     {
-        $lang = isset($lang)? $lang: Grav::instance()['language']->getActive();//bba
-        $this->tnt->setDatabaseHandle(new GravConnector($lang));
+       // $lang = isset($lang)? $lang: Grav::instance()['language']->getActive();//bba
+        $languages = Grav::instance()['config']['system']['languages']['supported'];
+        if(!in_array($lang, $languages))
+        {
+            echo in_array($lang, $languages);
+            echo (implode($languages));
+            echo($lang);
+            throw new LangNotFoundException("I Dont want to create an index as lang $lang is not supported");
+        }
+        if(!isset($lang))
+        {
+            throw new LangNotFoundException("Cannot create Index lang is not set");
+        }
+        echo "Creating INDEX for $lang \n";
+        $connector = new GravConnector();
+        $connector->setLang($lang);//bba
+        $this->tnt->setDatabaseHandle($connector);
         $indexer = $this->tnt->createIndex("grav.$lang.index");
-        
-//        $this->tnt->setDatabaseHandle(new GravConnector($lang));
-//        $indexer = $this->tnt->createIndex('grav.index');
-        
-        // Set the stemmer language if set
-//        if ($this->options['stemmer'] != 'default') {
-//            $indexer->setLanguage($this->options['stemmer']);
-//        }
+        // Set the stemmer language
         switch ($lang)
-            {
-                case 'de' : $indexer->setLanguage('german');
-                case 'ru' : $indexer->setLanguage('russian');
-                case 'it' : $indexer->setLanguage('italian');
-                case 'ar' : $indexer->setLanguage('arabic');
-                case 'hr' : $indexer->setLanguage('croatian');
-                case 'uk' : $indexer->setLanguage('ukrainian');
-                default : $indexer->setLanguage('porter');
-            }
+        {
+            //case 'de' : $indexer->setLanguage('german');
+            case 'ru' : $indexer->setLanguage('russian');
+            case 'it' : $indexer->setLanguage('italian');
+            case 'ar' : $indexer->setLanguage('arabic');
+            case 'hr' : $indexer->setLanguage('croatian');
+            case 'uk' : $indexer->setLanguage('ukrainian');
+            default : $indexer->setLanguage('porter');
+        }
         $indexer->run(); //BBA
-//        $indexer->run(); 
         
     }
     /**
@@ -172,28 +180,7 @@ class GravTNTSearch
         $languages = Grav::instance()['config']['system']['languages']['supported'];
         foreach ($languages as $lang)
         {
-            echo "Creating INDEX for $lang ----\n";
-            $connector = new GravConnector();
-            $connector->setLang($lang);//bba
-            $this->tnt->setDatabaseHandle($connector);
-            $indexer = $this->tnt->createIndex("grav.$lang.index");
-            // Set the stemmer language
-            switch ($lang)
-            {
-                //case 'de' : $indexer->setLanguage('german');
-                case 'ru' : $indexer->setLanguage('russian');
-                case 'it' : $indexer->setLanguage('italian');
-                case 'ar' : $indexer->setLanguage('arabic');
-                case 'hr' : $indexer->setLanguage('croatian');
-                case 'uk' : $indexer->setLanguage('ukrainian');
-                default : $indexer->setLanguage('porter');
-            }
-            // Set the stemmer language if set
-//            if ($this->options['stemmer'] != 'default') {
-//                $indexer->setLanguage($this->options['stemmer']);
-//            }
-            $indexer->run(); //BBA
-    //        $indexer->run(); 
+            $this->createIndex($lang);
         }
         
     }
@@ -234,7 +221,7 @@ class GravTNTSearch
         // Delete existing if it exists
         $indexer->delete($page->route());
 
-        $filter = $config = Grav::instance()['config']->get('plugins.tntsearch.filter');
+        $filter = $config = Grav::instance()['config']->get('plugins.tntsearch-multilang.filter');
         if ($filter && array_key_exists('items', $filter)) {
 
             if (is_string($filter['items'])) {

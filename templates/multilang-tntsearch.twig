@@ -1,0 +1,43 @@
+{% set url = url|default(base_url|rtrim('/') ~ '/' ~ config.get('plugins.multilang-tntsearch.query_route', 's')|trim('/')) %}
+{#{% set url = parentRoute %}#}
+{#{% set url = url %}#}
+{{dump(parentRoute)}}
+{% set pr = parentRoute %}
+{% set limit = limit|default(config.get('plugins.multilang-tntsearch.limit', 20)) %}
+{% set snippet = snippet|default(config.get('plugins.multilang-tntsearch.snippet', 300)) %}
+{% set min = min|default(config.get('plugins.multilang-tntsearch.min', 3)) %}
+{% set search_type = search_type|default(config.get('plugins.multilang-tntsearch.search_type', 'auto')) %}
+{% set placeholder = placeholder|default('Search...') %}
+{% set live_update = in_page ? live_update|default(config.get('plugins.multilang-tntsearch.live_uri_update', 1)) : 0 %}
+
+{% set options = { 
+    uri: url, 
+    limit: limit, 
+    snippet: snippet, 
+    min: min, 
+    in_page: in_page, 
+    live_update: live_update, 
+    search_type: search_type,
+    query_route:parentRoute
+ } %}
+
+<form role="form" class="tntsearch-form pure-u-sm-2-3 pure-u-lg-1-1">
+    {% block tntsearch_input %}
+    <div id="tntsearch-wrapper" class="form-group{{ dropdown ? ' tntsearch-dropdown' : '' }}">
+        <input type="text" class="form-control tntsearch-field{{ in_page ? ' tntsearch-field-inpage' : '' }}" data-tntsearch="{{ options|json_encode|e('html_attr') }}" placeholder="{{ placeholder }}" value="{{ not dropdown ? query|e : '' }}">
+            <span class="tntsearch-clear"{{ not query or dropdown ? ' style="display: none;"' : '' }}>&times;</span>
+    </div>
+    {% endblock %}
+    
+        <div class="tntsearch-results{{ in_page ? ' tntsearch-results-inpage' : '' }}">
+{% if tntsearch_results is defined and tntsearch_results is not empty and in_page %}
+            {% include 'multilang-tntsearch-ajax.html.twig' with {'parentRoute':pr} %}
+ {% endif %}
+        </div>
+        
+    {% if config.get('plugins.multilang-tntsearch.powered_by') %}
+    <p class="tntsearch-powered-by">
+        Powered by <a href="https://github.com/trilbymedia/grav-plugin-tntsearch" target="_blank">TNTSearch</a>
+    </p>
+     {% endif %}
+</form>

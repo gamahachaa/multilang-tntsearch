@@ -58,12 +58,12 @@ class MultilangIndexerCommand extends ConsoleCommand
             $this->output->writeln('');
 
             $this->doIndex(strtolower($lang));
-            $this->output->writeln('Done.');
+            $this->output->writeln('<green>Done</green>');
         }
         catch ( RuntimeException  $e)
         {
-            $this->output->writeln('<error>Re-indexing Search</error>');
-             $this->output->writeln('Closed.');
+            $this->output->writeln("<error>Re-indexing Search Excption found $e</error>");
+             $this->output->writeln('<red>Not DONE</red>');
         }
         
     }

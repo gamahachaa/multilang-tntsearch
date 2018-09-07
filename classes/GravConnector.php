@@ -102,7 +102,7 @@ class GravConnector extends \PDO
                 $fields = $gtnt->indexPageData($newPage, $route);
 //                $fields = $gtnt->indexPageData($page);
                 $results[] = (array) $fields;
-                echo("Added $counter $route {$this->lang} \n");//BBA
+                //echo("Added $counter $route {$this->lang} \n");//BBA
             } catch (\Exception $e) {
                 echo($e->getCode()."\n");
                 echo($e->getLine()."\n");

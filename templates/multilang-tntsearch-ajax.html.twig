@@ -1,0 +1,26 @@
+{% import 'partials/macros.twig' as macros %}
+<div class="pure-g">
+    {% if config.get('plugins.tntsearch.display_hits') or  config.get('plugins.tntsearch.display_time')%}
+        <p class="info" class="pure-u-1">
+{#            {{dump(parentRoute)}}#}
+            {% if config.get('plugins.tntsearch.display_hits') %}
+                <span class="hits">Found {{ tntsearch_results.number_of_hits }} results</span>
+            {% endif %}
+            {% if config.get('plugins.tntsearch.display_time') %}
+                <span class="time">in  <span>  {{ tntsearch_results.execution_time }}</span></span>
+            {% endif %}
+        </p>
+    {% endif %}
+
+    {% for key, val in tntsearch_results.hits  %}
+        <div class="pure-u-1">
+            <h6 class="title">
+                {{macros.getDocType(val.link) }}<a href="{{ base_url ~ val.link }}">{{ val.title }}</a>
+            </h6>
+            {% if config.get('plugins.tntsearch.display_route') %}
+                <span class="route">{{ val.link }} {{parentRoute}} {{parentRoute in val.link }}</span>
+            {% endif %}
+            <p>{{ val.content }}</p>
+        </div>
+    {% endfor %}
+</div>
