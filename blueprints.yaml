@@ -1,0 +1,31 @@
+name: Multilang Tntsearch
+version: 0.1.0
+description: fork of grav tntsearch allowing descreet language indexing
+icon: plug
+author:
+  name: gamahachaa
+  email: gamahachaa@gmail.com
+homepage: https://github.com/gamahachaa/grav-plugin-multilang-tntsearch
+demo: http://demo.yoursite.com
+keywords: grav, plugin, etc
+bugs: https://github.com/gamahachaa/grav-plugin-multilang-tntsearch/issues
+docs: https://github.com/gamahachaa/grav-plugin-multilang-tntsearch/blob/develop/README.md
+license: MIT
+
+form:
+  validation: strict
+  fields:
+    enabled:
+      type: toggle
+      label: Plugin status
+      highlight: 1
+      default: 0
+      options:
+        1: Enabled
+        0: Disabled
+      validate:
+        type: bool
+    text_var:
+      type: text
+      label: Text Variable
+      help: Text to add to the top of a page
