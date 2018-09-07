@@ -32,8 +32,8 @@ class GravConnector extends \PDO
         $results = [];
 
         $config = Grav::instance()['config'];
-        $filter = $config->get('plugins.tntsearch.filter');
-        $default_process = $config->get('plugins.tntsearch.index_page_by_default');
+        $filter = $config->get('plugins.multilang-tntsearch.filter');
+        $default_process = $config->get('plugins.multilang-tntsearch.index_page_by_default');
         $gtnt = new GravTNTSearch();
         //Grav::instance()['language']->setActive("de");
 //       echo (Grav::instance()['language']->getActive());
