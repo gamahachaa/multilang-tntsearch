@@ -244,11 +244,11 @@ class MultilangTntsearchPlugin extends Plugin
 
         if ($this->query) {
             $twig->twig_vars['query'] = $this->query;
-            dump($twig->twig_vars['query'] );
+           // dump($twig->twig_vars['query'] );
             $twig->twig_vars['tntsearch_results'] = $this->results;
         }
-        dump($this->config->get('plugins.'.self::PLUGIN_NAME.'.built_in_css'));
-        dump($this->config->get('plugins.'.self::PLUGIN_NAME.'.built_in_js'));
+        //dump($this->config->get('plugins.'.self::PLUGIN_NAME.'.built_in_css'));
+        //dump($this->config->get('plugins.'.self::PLUGIN_NAME.'.built_in_js'));
         if ($this->config->get('plugins.'.self::PLUGIN_NAME.'.built_in_css')) {
             $this->grav['assets']->addCss('plugin://'.self::PLUGIN_NAME.'/assets/tntsearch.css');
         }
