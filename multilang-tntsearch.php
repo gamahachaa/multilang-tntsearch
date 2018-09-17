@@ -30,6 +30,7 @@ class MultilangTntsearchPlugin extends Plugin
 
     /** @var  GravTNTSearch **/
     protected $gtnt;
+    const PLUGIN_NAME = 'multilang-tntsearch';
 
     /**
      * @return array
@@ -149,9 +150,9 @@ class MultilangTntsearchPlugin extends Plugin
 
         $this->current_route = $uri->path();
 
-        $this->built_in_search_page = $this->config->get('plugins.multilang-tntsearch.built_in_search_page');
-        $this->search_route = $this->config->get('plugins.multilang-tntsearch.search_route');
-        $this->query_route = $this->config->get('plugins.multilang-tntsearch.query_route');
+        $this->built_in_search_page = $this->config->get('plugins.'.self::PLUGIN_NAME.'.built_in_search_page');
+        $this->search_route = $this->config->get('plugins.'.self::PLUGIN_NAME.'.search_route');
+        $this->query_route = $this->config->get('plugins.'.self::PLUGIN_NAME.'.query_route');
        
         $this->query = $uri->param('q') ?: $uri->query('q');
 
@@ -168,7 +169,7 @@ class MultilangTntsearchPlugin extends Plugin
         /**
          * BBA
          */
-        $fuzzy = $this->config->get('plugins.multilang-tntsearch.fuzzy');
+        $fuzzy = $this->config->get('plugins.'.self::PLUGIN_NAME.'.fuzzy');
         if($fuzzy)
         {
             $options['fuzzy'] = $fuzzy;
@@ -192,7 +193,8 @@ class MultilangTntsearchPlugin extends Plugin
                 $page->init(new \SplFileInfo(__DIR__ . "/pages/tntquery.md"));
                 $page->slug(basename($this->current_route));
                 if ($uri->param('ajax') || $uri->query('ajax')) {
-                    $page->template('tntquery-ajax');
+//                    $page->template('tntquery-ajax');
+                    $page->template(self::PLUGIN_NAME.'-ajax');
                 }
                 $pages->addPage($page, $this->current_route);
             } elseif ($this->built_in_search_page && $this->search_route == $this->current_route) {
@@ -205,7 +207,7 @@ class MultilangTntsearchPlugin extends Plugin
 
         if ($page) {
 //            dump($page);
-            $this->config->set('plugins.multilang-tntsearch', $this->mergeConfig($page));
+            $this->config->set('plugins.'.self::PLUGIN_NAME, $this->mergeConfig($page));
 //            dump($this->config());
         }
 
@@ -242,18 +244,19 @@ class MultilangTntsearchPlugin extends Plugin
 
         if ($this->query) {
             $twig->twig_vars['query'] = $this->query;
-            //dump($twig->twig_vars['query'] );
+            dump($twig->twig_vars['query'] );
             $twig->twig_vars['tntsearch_results'] = $this->results;
         }
-
-        if ($this->config->get('plugins.multilang-tntsearch.built_in_css')) {
-            $this->grav['assets']->addCss('plugin://multilang-tntsearch/assets/tntsearch.css');
+        dump($this->config->get('plugins.'.self::PLUGIN_NAME.'.built_in_css'));
+        dump($this->config->get('plugins.'.self::PLUGIN_NAME.'.built_in_js'));
+        if ($this->config->get('plugins.'.self::PLUGIN_NAME.'.built_in_css')) {
+            $this->grav['assets']->addCss('plugin://'.self::PLUGIN_NAME.'/assets/tntsearch.css');
         }
         else{
             $this->grav['assets']->addCss('theme://css/tntsearch.css');
         }
-        if ($this->config->get('plugins.multilang-tntsearch.built_in_js')) {
-             $this->grav['assets']->addJs('plugin://multilang-tntsearch/assets/tntsearch.js');
+        if ($this->config->get('plugins.'.self::PLUGIN_NAME.'.built_in_js')) {
+             $this->grav['assets']->addJs('plugin://'.self::PLUGIN_NAME.'/assets/tntsearch.js');
         }
         else{
              $this->grav['assets']->addJs('theme://js/tntsearch.js');//bba
@@ -349,13 +352,13 @@ class MultilangTntsearchPlugin extends Plugin
         list($status, $msg) = $this->getIndexCount();
 
         if ($status === false) {
-            $message = '<i class="fa fa-binoculars"></i> <a href="/'. trim($this->admin_route, '/') . '/plugins/multilang-tntsearch">TNTSearch must be indexed before it will function properly.</a>';
+            $message = '<i class="fa fa-binoculars"></i> <a href="/'. trim($this->admin_route, '/') . '/plugins//'.self::PLUGIN_NAME.'">TNTSearch must be indexed before it will function properly.</a>';
             $this->grav['admin']->addTempMessage($message, 'error');
         }
 
         $twig->twig_vars['tntsearch_index_status'] = ['status' => $status, 'msg' => $msg];
-        $this->grav['assets']->addCss('plugin://multilang-tntsearch/assets/admin/tntsearch.css');
-        $this->grav['assets']->addJs('plugin://multilang-tntsearch/assets/admin/tntsearch.js');
+        $this->grav['assets']->addCss('plugin://'.self::PLUGIN_NAME.'/assets/admin/tntsearch.css');
+        $this->grav['assets']->addJs('plugin://'.self::PLUGIN_NAME.'/assets/admin/tntsearch.js');
     }
 
     /**
