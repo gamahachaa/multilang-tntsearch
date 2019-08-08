@@ -1,7 +1,7 @@
 {% set url = url|default(base_url|rtrim('/') ~ '/' ~ config.get('plugins.multilang-tntsearch.query_route', 's')|trim('/')) %}
 {#{% set url = parentRoute %}#}
 {#{% set url = url %}#}
-{{dump(parentRoute)}}
+{#{{dump(parentRoute)}}#}
 {% set pr = parentRoute %}
 {% set limit = limit|default(config.get('plugins.multilang-tntsearch.limit', 20)) %}
 {% set snippet = snippet|default(config.get('plugins.multilang-tntsearch.snippet', 300)) %}

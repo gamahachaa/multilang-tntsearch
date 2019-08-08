@@ -105,6 +105,15 @@ class MultilangTntsearchPlugin extends Plugin
         if (isset($page->header()->author)) {
             $fields->author = $page->header()->author;
         }
+        if (isset($taxonomy['tag'])) {
+            $fields->tag = implode(",", $taxonomy['tag']);
+        }
+        if (isset($taxonomy['audience'])) {
+            $fields->tag = implode(",", $taxonomy['audience']);
+        }
+        if (isset($taxonomy['context'])) {
+            $fields->tag = implode(",", $taxonomy['context']);
+        }
     }
 
     public function onTNTSearchQuery(Event $e)
